@@ -4,12 +4,20 @@ const footnote = require('markdown-it-footnote');
 module.exports = {
     dest: './dist',
     head: [
-        ['link', { rel: 'icon', href: '/favicon.svg' }]
+        ['link', { rel: 'icon', href: '/favicon.svg' }],
+        ['link', { rel: 'manifest', href: '/manifest.json' }],
+        ['meta', { name: 'theme-color', content: '#3eaf7c' }],
+        ['meta', { name: 'apple-mobile-web-app-capable', content: 'yes' }],
+        ['meta', { name: 'apple-mobile-web-app-status-bar-style', content: 'black' }],
+        ['link', { rel: 'apple-touch-icon', href: '/favicon.svg' }],
+        ['link', { rel: 'mask-icon', href: '/favicon.svg', color: '#3eaf7c' }],
+        ['meta', { name: 'msapplication-TileImage', content: '/favicon.svg' }],
+        ['meta', { name: 'msapplication-TileColor', content: '#000000' }],
     ],
     title: `Code Notes`,
     permalink: "/:year/:month/:day/:slug",
     description: ' ',
-    // plugins: ['@vuepress/back-to-top', '@vuepress/nprogress'],
+    plugins: ['@vuepress/pwa'],
     theme: 'reco',
     themeConfig: {
         // reco
@@ -29,11 +37,11 @@ module.exports = {
             { text: 'Github', link: 'https://github.com/Urie96', icon: 'reco-github' },
         ],
         smoothScroll: true,
-        docsRepo: 'Urie96/notes',
+        docsRepo: 'Urie96/code-notes',
         // 假如文档不是放在仓库的根目录下：
         docsDir: 'docs',
         // 假如文档放在一个特定的分支下：
-        docsBranch: 'master',
+        docsBranch: 'main',
         editLinks: true,
         // editLinkText: '在 GitHub 上编辑此页',
         logo: '/favicon.svg',
@@ -43,7 +51,7 @@ module.exports = {
         activeHeaderLinks: true,
         search: true,
         searchMaxSuggestions: 10,
-        // lastUpdated: '上次更新于',
+        lastUpdated: 'Last Updated',
         codeTheme: 'tomorrow',
     },
     markdown: {

@@ -1,7 +1,7 @@
 name: remote ssh command
 on:
   push:
-    branches: [master]
+    branches: [main]
 
 jobs:
   build:
@@ -15,7 +15,7 @@ jobs:
           username: root
           password: ${{ secrets.PASSWORD}}
           command: |
-            cd /root/blog
+            cd /root/code-notes
             git checkout .
             git pull
             npm run build-in-docker
