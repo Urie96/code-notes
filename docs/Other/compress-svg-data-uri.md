@@ -5,6 +5,12 @@ categories: [Other]
 tags: [JavaScript]
 ---
 
+::: tip
+指定文件路径，复制其 data URi 到剪切板，便于粘贴到 HTML 或者 CSS 中
+:::
+
+<!-- more -->
+
 ## Data URI Format
 
 ::: warning
@@ -73,5 +79,5 @@ module.exports = function run() {
 ```
 
 ::: tip
-可以使用 node 将其加入到全局命令
+可以使用 node 将其加入到全局命令，就可以使用`touri <filePath>`将 URI 复制到剪切板了
 :::

@@ -5,6 +5,12 @@ categories: [Dev-Ops]
 tags: [Bash]
 ---
 
+::: tip
+编写 Bash 程序，可以生成文件夹内满足给定条件的`*.gz`文件
+:::
+
+<!-- more -->
+
 **Background**:
 
 - `gzip -r [dir]`命令会递归地压缩目录下的所有文件，但有些格式的文件并不需要进行处理，而且压缩小文件的意义并不大
