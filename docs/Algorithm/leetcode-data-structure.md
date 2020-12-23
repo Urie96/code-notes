@@ -187,3 +187,9 @@ TreeNode.generate([1, null, 3, 4, 5, null, 7]).print();
 //         4   5
 //          7
 ```
+
+## LeetCode Plugin In VS Code
+
+::: tip
+VS Code 可以使用 LeetCode 插件在本地拉取代码，这样可以方便地进行调试以及类型推导
+:::

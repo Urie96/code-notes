@@ -57,5 +57,9 @@
 		"scope": "markdown",
 		"body": "::: details $1\n:::",
 	},
-	
+	"more":{
+		"prefix": "more",
+		"scope": "markdown",
+		"body": "<!-- more -->",
+	},
 }
