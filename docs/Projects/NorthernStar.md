@@ -2,7 +2,7 @@
 title: Northern Star
 date: 2020-12-03 17:32:58
 categories: [Projects]
-tags: [Golang, Docker, Micro Service, MySQL, gRPC, GORM, Nginx]
+tags: [Golang, Docker, MicroService, MySQL, gRPC, GORM, Nginx]
 ---
 
 ## Difficulty
