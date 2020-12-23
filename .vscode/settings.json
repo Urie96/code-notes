@@ -8,5 +8,6 @@
             "strings": true
         },
         "editor.acceptSuggestionOnEnter": "on"
-    }
+    },
+    "editor.tabSize": 2
 }
