@@ -198,3 +198,140 @@ module.exports = {
 - 如果 webpack 输出的 bundle 名字里已经有 hash 了，work box 不会设置 revision（第一次使用时曾一度怀疑人生）
 
 :::
+
+### NPM <Badge text="2021.1.4" />
+
+::: tip
+`workbox-webpack-plugin`与 webpack 强耦合。现在 webpack 已经更新了 5.0，但是插件并没有适配，导致出现了一些令本新手困惑的问题，直到最后才发现是插件不适配。所以，还是单独使用 npm 包比较稳定。
+:::
+
+安装：`npm i -D workbox-build`
+脚本：
+
+```js
+// workbox-build.js
+const { generateSW } = require('workbox-build');
+
+const swDest = './dist/sw.js';
+
+generateSW({
+  // mode: 'development',
+  swDest,
+  globDirectory: './dist/',
+  cleanupOutdatedCaches: true,
+  clientsClaim: true,
+  skipWaiting: true,
+  sourcemap: false,
+  dontCacheBustURLsMatching: /\.\w{8}\.[^.]*$/, // 如果文件名已经带有webpack的8位hash，就不再添加revision
+  globPatterns: ['**.{js,css,html,svg,json}', '**/**.{js,css}'], // 不知道为什么glob文档说**可以递归但是并没有
+  runtimeCaching: [
+    {
+      urlPattern: /https:\/\/(cdn)/,
+      handler: 'CacheFirst',
+      options: {
+        cacheableResponse: {
+          statuses: [0, 200],
+        },
+      },
+    },
+    {
+      urlPattern: /https?:\/\/[^/]+\/api\/courses/,
+      handler: 'StaleWhileRevalidate',
+      options: {
+        cacheableResponse: {
+          statuses: [200],
+        },
+      },
+    },
+  ],
+}).then(({ count, size }) => {
+  console.log(
+    `Generated ${swDest}, which will precache ${count} files, totaling ${size} bytes.`
+  );
+});
+```
+
+## register-service-worker <Badge text="2021.01.04+" />
+
+[源码地址](https://github.com/yyx990803/register-service-worker)
+
+源码只有 100 多行，提供了多个关于 service worker 的钩子函数，在 dom 线程中运行。可以在服务器的`service-worker.js`更新的时候提醒用户去点击刷新，避免错过最新的内容。示例如下：
+
+```js
+// registerServiceWorker.js
+import { register } from 'register-service-worker';
+
+const emit = (name, event) => {
+  window.dispatchEvent(new CustomEvent(name, event));
+};
+
+register('/sw.js', {
+  updated(registration) {
+    emit('sw-updated');
+    console.log('New content is available; please refresh.');
+  },
+});
+```
+
+::: tip
+`registerServiceWorker.js`将`register-service-worker`的`updated()`钩子注册为自定义事件，方便其他地方直接监听
+:::
+
+```vue
+<!-- SWPopup.vue -->
+<template>
+  <div v-if="enable" class="sw-update-popup">
+    {{ message }}
+    <button @click="reload">
+      {{ buttonText }}
+    </button>
+  </div>
+</template>
+
+<script>
+import { ref } from 'vue';
+import './registerServiceWorker';
+
+export default {
+  setup(props) {
+    const enable = ref(false);
+    const message = '发现新内容可用';
+    const buttonText = '刷新';
+
+    const reload = () => {
+      location.reload(true);
+      enable.value = false;
+    };
+
+    addEventListener('sw-updated', () => {
+      enable.value = true;
+    });
+    return { enable, message, buttonText, reload };
+  },
+};
+</script>
+
+<style scoped>
+.sw-update-popup {
+  position: fixed;
+  right: 1em;
+  bottom: 1em;
+  padding: 1em;
+  border: 1px solid var(--theme);
+  border-radius: 3px;
+  background: #fff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  z-index: 3;
+}
+
+.sw-update-popup > button {
+  margin-top: 0.5em;
+  padding: 0.25em 2em;
+}
+</style>
+```
+
+::: tip
+还可以修改`service-worker.js`，监听 dom 线程的 message 消息来调用`skipWaiting()`而不是自动调用。并没有那样做因为我觉得提醒用户只是希望用户刷新页面，而`skipWaiting()`还是应该尽早调用。
+:::

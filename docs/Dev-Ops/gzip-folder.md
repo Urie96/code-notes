@@ -1,12 +1,12 @@
 ---
-title: 文件夹内递归生成 gzip 的 Bash 程序
+title: 文件夹内递归生成 gzip 的 Shell 程序
 date: 2020-12-01
 categories: [Dev-Ops]
-tags: [Bash]
+tags: [Shell]
 ---
 
 ::: tip
-编写 Bash 程序，可以生成文件夹内满足给定条件的`*.gz`文件
+编写 Shell 程序，可以生成文件夹内满足给定条件的`*.gz`文件
 :::
 
 <!-- more -->
@@ -83,3 +83,28 @@ gzipfolder "$(pwd)/$1"
 ::: danger BUG
 文件夹名字不能带有空格，不然`for i in $(ls $thisDir)`会将其识别为两个文件夹
 :::
+
+## Use Find <Badge text="2021.01.04+" />
+
+发现一个强大的命令 `find` 可以将上面整段代码用一行实现：
+
+```bash
+find $1 \! -name "*.gz" -type f -size +10k -exec sh -c ' gzip --best -c "$0" > "$0".gz && echo "$0.gz"' {} \;
+```
+
+::: tip NOTES
+
+- `-name`可以简单地指定文件后缀。没有用`-regex`来指定正则是因为它不能正确工作，除非在 Mac 中添加`-E`或者在 Linux 中添加`-regextype sed`，总之很奇怪，已经超出了我的探索兴趣；
+- `!`否定，特殊字符所以需要`\!`转义。上例中表示排除`*.gz`文件；
+- `-type`指定文件类型，f 表示普通文件；
+- `-size`指定文件大小，`+10k`表示大于 10kb；
+- `-exec`表示对于每个符合的文件执行命令，并且用`{}`占位表示文件的相对路径，并且以`;`结尾。这个命令有个奇怪的点是它只会替换一个命令中第一个`{}`，像`echo {} > {}`这样有两个的话就不会替换第二个`{}`，所以用了`sh -c`命令；
+- `sh -c`接收一个字符串，后面的参数作为运行这段字符串的参数；
+
+:::
+
+删除所有`*.gz`：
+
+```bash
+find $1 -name "*.gz" -type f -exec rm {} \;
+```
