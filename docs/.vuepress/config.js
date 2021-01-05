@@ -23,7 +23,7 @@ module.exports = {
             updatePopup: {
                 message: "New content is available.",
                 buttonText: "Refresh"
-            }
+            },
         }
     },
     theme: 'reco',

@@ -223,7 +223,7 @@ generateSW({
   skipWaiting: true,
   sourcemap: false,
   dontCacheBustURLsMatching: /\.\w{8}\.[^.]*$/, // 如果文件名已经带有webpack的8位hash，就不再添加revision
-  globPatterns: ['**.{js,css,html,svg,json}', '**/**.{js,css}'], // 不知道为什么glob文档说**可以递归但是并没有
+  globPatterns: ['**/*.{js,css,html,svg,json}'],
   runtimeCaching: [
     {
       urlPattern: /https:\/\/(cdn)/,
@@ -238,8 +238,12 @@ generateSW({
       urlPattern: /https?:\/\/[^/]+\/api\/courses/,
       handler: 'StaleWhileRevalidate',
       options: {
+        cacheName: 'cache-name',
         cacheableResponse: {
           statuses: [200],
+        },
+        expiration: {
+          maxEntries: 20,
         },
       },
     },
