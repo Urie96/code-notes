@@ -17,15 +17,16 @@ module.exports = {
     title: `Code Notes`,
     permalink: "/:year/:month/:day/:slug",
     description: ' ',
-    plugins: {
-        '@vuepress/pwa': {
+    plugins: [
+        [require('./plugins/copy-code'), {}],
+        ['@vuepress/pwa', {
             serviceWorker: true,
             updatePopup: {
                 message: "New content is available.",
                 buttonText: "Refresh"
             },
-        }
-    },
+        }],
+    ],
     theme: 'reco',
     themeConfig: {
         // reco

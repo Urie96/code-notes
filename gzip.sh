@@ -1,3 +1,7 @@
-# find ./dist -name "*.gz" -type f -exec rm {} \;
+# find ./dist -name "*.gz" -type f | xargs rm
 
-find $1 \! -name "*.gz" -type f -size +10k -exec sh -c ' gzip --best -c "$0" > "$0".gz && echo "$0.gz"' {} \;
+gz() {
+  gzip --best -c $1 >$1.gz
+}
+
+find $1 \! -name "*.gz" -type f -size +10k | xargs gz
