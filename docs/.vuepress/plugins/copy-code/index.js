@@ -1,11 +1,15 @@
 "use strict";
 const path = require('path');
 
-module.exports = (options, { themeConfig }) => {
+module.exports = (options = {}) => {
   return {
     name: "copy-code",
     define: () => ({
-      CODE_COPY_OPIONS: Object.keys(options).length > 0 ? options : themeConfig.copyCode || {},
+      CODE_COPY_OPTIONS: {
+        showInMobile: false,
+        selector: 'div[class*="language-"] pre',
+        ...options
+      },
     }),
     clientRootMixin: path.resolve(__dirname, "./clientRootMixin.js"),
   };

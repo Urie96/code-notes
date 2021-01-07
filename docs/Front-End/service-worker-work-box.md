@@ -89,9 +89,9 @@ workbox.routing.registerRoute(
 - **StaleWhileRevalidate**：直接使用缓存，并在后台刷新缓存，缓存未命中就等待请求
 - 还可以自定义策略
 
-#### Cacheable Response Plugin
-
 :::
+
+#### Cacheable Response Plugin
 
 为了只缓存成功的响应，需要在向缓存策略传入配置：
 

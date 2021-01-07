@@ -23,16 +23,21 @@
   right 0
   z-index 100
   text-align center
+  display flex
+  display -webkit-flex
+  flex-flow column nowrap
+  align-items center
 
   .message
-    display inline-block
+    display flex
+    display -webkit-flex
+    align-items center
     padding 8px 10px
     border-radius 3px
     box-shadow 0 0 10px 0 var(--box-shadow-color, #bbb)
     background var(--bgcolor, #fff)
     color var(--text-color, #333)
     font-size 14px
-    transition height 0.2s ease-in-out, margin 0.2s ease-in-out
 
     &.move-in
       animation message-move-in 0.3s ease-in-out
@@ -42,6 +47,4 @@
       animation-fill-mode forwards
 
     svg
-      position relative
-      bottom -0.125em
       margin-right 5px

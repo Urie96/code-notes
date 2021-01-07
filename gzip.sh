@@ -1,7 +1,10 @@
-# find ./dist -name "*.gz" -type f | xargs rm
+size=10k
+pattern="\.(js|css|html|svg)$"
 
-gz() {
-  gzip --best -c $1 >$1.gz
-}
+dir=$1
 
-find $1 \! -name "*.gz" -type f -size +10k | xargs gz
+find $dir -type f -size +$size | egrep $pattern | xargs -I {} sh -c ' gzip --best -c "{}" > "{}".gz && echo "{}.gz"' | wc -l | xargs -I {} echo "{} files compressed"
+
+# find ./dist -type f | egrep "\.gz$" | xargs -I {} sh -c "rm {} && echo {}" | wc -l | xargs -I {} echo "{} files deleted"
+
+# find $1 \! -name "*.gz" -type f -size +10k | xargs sh -c ' gzip --best -c "{}" > "{}".gz && echo "{}.gz"'

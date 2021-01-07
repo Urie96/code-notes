@@ -89,7 +89,7 @@ gzipfolder "$(pwd)/$1"
 发现一个强大的命令 `find` 可以将上面整段代码用一行实现：
 
 ```bash
-find $1 \! -name "*.gz" -type f -size +10k -exec sh -c ' gzip --best -c "$0" > "$0".gz && echo "$0.gz"' {} \;
+$ find $1 \! -name "*.gz" -type f -size +10k -exec sh -c ' gzip --best -c "$0" > "$0".gz && echo "$0.gz"' {} \;
 ```
 
 ::: tip NOTES
@@ -106,5 +106,16 @@ find $1 \! -name "*.gz" -type f -size +10k -exec sh -c ' gzip --best -c "$0" > "
 删除所有`*.gz`：
 
 ```bash
-find $1 -name "*.gz" -type f -exec rm {} \;
+$ find $1 -name "*.gz" -type f -exec rm {} \;
+```
+
+### 使用匿名管道分工合作 <Badge text="2021.01.07+" />
+
+使用`find`遍历目录查找大于 10k 的文件名，使用`egrep`通过正则过滤文件名，使用`xargs`将文件名转换为命令参数，使用`wc`统计压缩的文件个数：
+
+```sh
+$ find ./dist -type f -size +10k | egrep "\.(js|css|html|svg)$" | xargs -I {} sh -c ' gzip --best -c "{}" > "{}".gz && echo "{}.gz"' | wc -l | xargs -I {} echo "{} files compressed"
+54 files compressed
+$ find ./dist -type f | egrep "\.gz$" | xargs -I {} sh -c "rm {} && echo {}" | wc -l | xargs -I {} echo "{} files deleted"
+54 files deleted
 ```

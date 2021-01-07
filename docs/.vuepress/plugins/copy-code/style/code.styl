@@ -1,16 +1,23 @@
+div[class*="language-"]:hover
+  .copy-code-button
+    transform: scale(1)
+
 .copy-code-button
+  transform: scale(0)
   width 32px
   height 32px
   padding 7px 8px
   border-radius 50%
   color #fff
-  background #339af0
+  background #3eaf7c;
   outline none
   border-width 0
+  transition: all 0.5s
 
   &:hover
     cursor pointer !important
-    background #228be6
+    background #4ebf8c
+    transform: scale(1.5)!important
 
   div[class*='language-'] &
     position absolute
@@ -23,6 +30,7 @@
       border-top-right-radius 50% 20%
       border-bottom-right-radius 50% 20%
 
-  .icon-copy-code
+  svg
+    fill currentColor
     width 100%
     height 100%  

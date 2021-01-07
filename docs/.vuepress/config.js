@@ -116,6 +116,7 @@ function getRecoBlogConfig() {
         socialLinks: [
             { icon: 'reco-github', link: 'https://github.com/Urie96' },
             { icon: 'reco-mail', link: 'mailto:urie@mail.ustc.edu.cn' },
+            { icon: 'reco-wechat', link: 'https://s7.addthis.com/static/wechat_follow.html?id=yangrui19960623&u=https://u.wechat.com/EMKvZ_5c_yuQ6j2qDeyJ5J8' },
         ],
     }
 }

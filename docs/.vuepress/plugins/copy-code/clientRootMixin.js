@@ -1,73 +1,73 @@
 import Message from "./message";
 import Vue from "vue";
 import "./style/code.styl";
-let message;
-const options = CODE_COPY_OPIONS;
+
+const options = CODE_COPY_OPTIONS;
+
 const isMobile = () => navigator
     ? /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/iu.test(navigator.userAgent)
     : false;
-const codeCopyMinxin = Vue.extend({
+
+const insertCopyButton = (codeBlockElement) => {
+    if (codeBlockElement.hasAttribute("copy-code-registerd")) return
+    const copyElement = document.createElement("button");
+    copyElement.className = "copy-code-button";
+    copyElement.innerHTML =
+        '<svg height="512" viewBox="0 0 24 24" width="512" xmlns="http://www.w3.org/2000/svg"><path d="M4 6.75A4.756 4.756 0 018.75 2h9.133a2.745 2.745 0 00-2.633-2H3.75A2.752 2.752 0 001 2.75v15.5A2.752 2.752 0 003.75 21H4z"/><path d="M20.25 4H8.75A2.752 2.752 0 006 6.75v14.5A2.752 2.752 0 008.75 24h11.5A2.752 2.752 0 0023 21.25V6.75A2.752 2.752 0 0020.25 4zm-2 17h-7.5a.75.75 0 010-1.5h7.5a.75.75 0 010 1.5zm0-4h-7.5a.75.75 0 010-1.5h7.5a.75.75 0 010 1.5zm0-3.5h-7.5a.75.75 0 010-1.5h7.5a.75.75 0 010 1.5zm0-4h-7.5a.75.75 0 010-1.5h7.5a.75.75 0 010 1.5z"/></svg>';
+    copyElement.addEventListener("click", () => {
+        copyToClipboard(codeBlockElement.innerText);
+    });
+    // copyElement.setAttribute("aria-label", "Copy");
+    // copyElement.setAttribute("data-balloon-pos", "left");
+    if (codeBlockElement.parentElement)
+        codeBlockElement.parentElement.insertBefore(copyElement, codeBlockElement);
+    codeBlockElement.setAttribute("copy-code-registerd", "");
+}
+
+const genCopyButton = () => {
+    if (isMobile() && !options.showInMobile) return
+    const selector = options.selector;
+    setTimeout(() => {
+        const insert = (els) => document
+            .querySelectorAll(els)
+            .forEach(insertCopyButton);
+        if (typeof selector === "string") {
+            insert(selector)
+        } else if (Array.isArray(selector)) {
+            selector.forEach(insert)
+        }
+    }, 1000);
+}
+
+const lazyLoad = (func) => {
+    let res = null
+    return () => res ? res : res = func()
+}
+const messageSingleton = lazyLoad(() => new Message())
+const textAreaSingleton = lazyLoad(() => {
+    const textAreaElement = document.createElement("textarea");
+    textAreaElement.setAttribute("readonly", "");
+    textAreaElement.style.position = "absolute";
+    textAreaElement.style.top = "-9999px";
+    return textAreaElement
+})
+
+const copyToClipboard = (code) => {
+    const message = messageSingleton()
+    const textAreaElement = textAreaSingleton()
+    textAreaElement.value = code;
+    document.body.appendChild(textAreaElement);
+    textAreaElement.select();
+    document.execCommand("copy");
+    document.body.removeChild(textAreaElement);
+    message.pop("Copied", options.duration);
+}
+
+export default Vue.extend({
     mounted() {
-        message = new Message();
-        if (!isMobile() || options.showInMobile)
-            this.genCopyButton();
+        genCopyButton();
     },
     updated() {
-        if (!isMobile() || options.showInMobile)
-            this.genCopyButton();
-    },
-    methods: {
-        genCopyButton() {
-            const selector = options.selector || 'div[class*="language-"] pre';
-            setTimeout(() => {
-                if (typeof selector === "string")
-                    document
-                        .querySelectorAll(selector)
-                        .forEach(this.insertCopyButton.bind(this));
-                else if (Array.isArray(selector))
-                    selector.forEach((item) => {
-                        document
-                            .querySelectorAll(item)
-                            .forEach(this.insertCopyButton.bind(this));
-                    });
-            }, 1000);
-        },
-        insertCopyButton(codeBlockElement) {
-            if (!codeBlockElement.hasAttribute("copy-code-registerd")) {
-                const copyElement = document.createElement("button");
-                copyElement.className = "copy-code-button";
-                copyElement.innerHTML =
-                    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" class="icon-copy-code"><path fill="currentColor" d="M384 112v352c0 26.51-21.49 48-48 48H48c-26.51 0-48-21.49-48-48V112c0-26.51 21.49-48 48-48h80c0-35.29 28.71-64 64-64s64 28.71 64 64h80c26.51 0 48 21.49 48 48zM192 40c-13.255 0-24 10.745-24 24s10.745 24 24 24 24-10.745 24-24-10.745-24-24-24m96 114v-20a6 6 0 00-6-6H102a6 6 0 00-6 6v20a6 6 0 006 6h180a6 6 0 006-6z" /></svg>';
-                copyElement.addEventListener("click", () => {
-                    this.copyToClipboard(codeBlockElement.innerText);
-                });
-                // copyElement.setAttribute("aria-label", "Copy");
-                // copyElement.setAttribute("data-balloon-pos", "left");
-                if (codeBlockElement.parentElement)
-                    codeBlockElement.parentElement.insertBefore(copyElement, codeBlockElement);
-                codeBlockElement.setAttribute("copy-code-registerd", "");
-            }
-        },
-        copyToClipboard(code) {
-            const selection = document.getSelection();
-            /** current selection */
-            const selectedRange = selection && selection.rangeCount > 0 ? selection.getRangeAt(0) : false;
-            const textAreaElement = document.createElement("textarea");
-            textAreaElement.value = code;
-            textAreaElement.setAttribute("readonly", "");
-            textAreaElement.style.position = "absolute";
-            textAreaElement.style.top = "-9999px";
-            document.body.appendChild(textAreaElement);
-            textAreaElement.select();
-            document.execCommand("copy");
-            message.pop("Copied", options.duration);
-            document.body.removeChild(textAreaElement);
-            // recover the previous selection
-            if (selectedRange && selection) {
-                selection.removeAllRanges();
-                selection.addRange(selectedRange);
-            }
-        },
+        genCopyButton();
     },
 });
-export default codeCopyMinxin;
