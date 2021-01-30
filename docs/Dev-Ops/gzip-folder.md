@@ -2,7 +2,7 @@
 title: 文件夹内递归生成 gzip 的 Shell 程序
 date: 2020-12-01
 categories: [Dev-Ops]
-tags: [Shell]
+tags: [Shell, Linux]
 ---
 
 ::: tip

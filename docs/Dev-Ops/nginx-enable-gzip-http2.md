@@ -10,14 +10,28 @@ tags: [Nginx]
 See [official documentation](http://nginx.org/en/download.html).
 
 ```bash
-$ wget http://nginx.org/download/nginx-1.19.5.tar.gz
-$ tar xf nginx-1.19.5.tar.gz
-$ cd nginx-1.19.5
-$ ./configure --with-http_v2_module --with-http_gzip_static_module --with-http_ssl_module
-$ make
-$ make install
-$ cd where bin is
-$ ln -s $(pwd)/nginx /usr/local/bin/nginx
+NGINX_VERSION=1.19.5
+
+set -ex
+wget http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz
+tar xf nginx-${NGINX_VERSION}.tar.gz
+rm -f nginx-${NGINX_VERSION}.tar.gz
+cd ./nginx-${NGINX_VERSION}
+git clone https://github.com/google/ngx_brotli.git
+cd ngx_brotli
+git submodule update --init
+cd ..
+./configure \
+  --sbin-path=/usr/sbin/nginx \
+  --conf-path=/etc/nginx/nginx.conf \
+  --add-module=$PWD/ngx_brotli \
+  --with-http_v2_module \
+  --with-http_gzip_static_module \
+  --with-http_ssl_module
+make -j$(getconf _NPROCESSORS_ONLN)
+make install
+rm -rf ngx_brotli
+nginx -V
 ```
 
 ## Command

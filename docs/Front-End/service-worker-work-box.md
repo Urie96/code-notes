@@ -223,7 +223,8 @@ generateSW({
   skipWaiting: true,
   sourcemap: false,
   dontCacheBustURLsMatching: /\.\w{8}\.[^.]*$/, // 如果文件名已经带有webpack的8位hash，就不再添加revision
-  globPatterns: ['**/*.{js,css,html,svg,json}'],
+  globPatterns: ['**/*.{js,css,svg,json}', 'index.html'],
+  navigateFallback: '/index.html', // 如果是navigate请求，没有找到缓存的话可以返回index.html页面，交给单页应用去完成路由。2021.1.29+
   runtimeCaching: [
     {
       urlPattern: /https:\/\/(cdn)/,

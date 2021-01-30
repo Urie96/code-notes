@@ -1,5 +1,5 @@
-const fs = require('fs');
 const footnote = require('markdown-it-footnote');
+const getPlugins = require('./plugins/');
 
 module.exports = {
     dest: './dist',
@@ -17,16 +17,7 @@ module.exports = {
     title: `Code Notes`,
     permalink: "/:year/:month/:day/:slug",
     description: ' ',
-    plugins: [
-        [require('./plugins/copy-code'), {}],
-        ['@vuepress/pwa', {
-            serviceWorker: true,
-            updatePopup: {
-                message: "New content is available.",
-                buttonText: "Refresh"
-            },
-        }],
-    ],
+    plugins: getPlugins(),
     theme: 'reco',
     themeConfig: {
         // reco
@@ -54,7 +45,6 @@ module.exports = {
         editLinks: true,
         // editLinkText: '在 GitHub 上编辑此页',
         logo: '/favicon.svg',
-        sidebar: getSideBar(),
         sidebarDepth: 1,
         displayAllHeaders: false,
         activeHeaderLinks: true,
@@ -77,30 +67,13 @@ module.exports = {
     configureWebpack: (config, isServer) => {
         /** @type {import('webpack').Configuration} */
         const cfg = {}
+        if (!isServer) {
+            cfg.plugins = [
+                // new (require('webpack-bundle-analyzer').BundleAnalyzerPlugin)()
+            ]
+        }
         return cfg
     },
-}
-
-
-function getSideBar() {
-    return [
-        // {
-        //     title: '笔记',
-        //     collapsable: true,
-        //     sidebarDepth: 1,
-        //     children: getFileNamesInFolder('docs/Dev-Ops'),
-        // },
-        // {
-        //     title: '项目',
-        //     children: getFileNamesInFolder('docs/projects'),
-        // }
-    ]
-}
-
-function getFileNamesInFolder(folderPath) {
-    const prefix = folderPath.match(/[^/]+$/)[0] + '/'
-    const fileNames = fs.readdirSync(folderPath).filter(v => v.endsWith('.md')).map(v => prefix + v.replace(/\.md$/, ''))
-    return fileNames
 }
 
 function getRecoBlogConfig() {

@@ -6,19 +6,23 @@
   "scripts": {
     "dev": "vuepress dev docs",
     "build": "vuepress build docs",
-    "sw": "node ./docs/.vuepress/workbox-build.js",
-    "ci-build": "./ci-build.sh",
-    "build-in-docker": "./build-in-docker.sh",
-    "gzip": "./gzip.sh dist"
+    "postbuild": "npm run sw && npm run zip",
+    "zip": "node ./docs/.vuepress/zip.js",
+    "sw": "node ./docs/.vuepress/workbox-build.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@vuepress/plugin-pwa": "^1.7.1",
+    "brotli": "^1.3.2",
+    "chalk": "^4.1.0",
+    "glob": "^7.1.6",
     "markdown-it-footnote": "^3.0.2",
+    "register-service-worker": "^1.7.2",
     "vuepress": "^1.7.1",
     "vuepress-theme-reco": "^1.6.1",
-    "workbox-build": "^6.0.2"
-  }
+    "workbox-build": "^6.0.2",
+    "zlib": "^1.0.5"
+  },
+  "dependencies": {}
 }
