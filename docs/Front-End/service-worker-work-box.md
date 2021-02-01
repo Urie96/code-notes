@@ -224,7 +224,8 @@ generateSW({
   sourcemap: false,
   dontCacheBustURLsMatching: /\.\w{8}\.[^.]*$/, // 如果文件名已经带有webpack的8位hash，就不再添加revision
   globPatterns: ['**/*.{js,css,svg,json}', 'index.html'],
-  navigateFallback: '/index.html', // 如果是navigate请求，没有找到缓存的话可以返回index.html页面，交给单页应用去完成路由。2021.1.29+
+  navigateFallback: '/index.html', // 如果是navigate请求，没有找到缓存的话可以返回缓存的index.html页面，交给单页应用去完成路由。2021.1.29+
+  navigateFallbackDenylist: [/\/graphql/], // 如果navigate请求需要直接访问后端，则不返回缓存的index.html页面，比如SSO登录重定向。2021.2.1+
   runtimeCaching: [
     {
       urlPattern: /https:\/\/(cdn)/,

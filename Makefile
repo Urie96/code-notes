@@ -12,7 +12,7 @@ build: $(OUTPUT)
 
 $(OUTPUT): node_modules $(SRC_FILES)
 	npm run build
-	touch dist
+	touch $(OUTPUT)
 
 node_modules: package-lock.json package.json
 	npm ci
