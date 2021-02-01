@@ -1,22 +1,22 @@
-# name: remote ssh command
-# on:
-#   push:
-#     branches: [main]
+name: remote ssh command
+on:
+  push:
+    branches: [main]
 
-# jobs:
-#   build:
-#     name: Build
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: executing remote ssh commands using password
-#         uses: garygrossgarten/github-action-ssh@release
-#         with:
-#           host: ${{ secrets.HOST }}
-#           username: root
-#           password: ${{ secrets.PASSWORD}}
-#           command: |
-#             cd /root/code-notes
-#             git checkout .
-#             git pull
-#             npm run build-in-docker
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: executing remote ssh commands using password
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+          host: ${{ secrets.HOST }}
+          username: root
+          password: ${{ secrets.PASSWORD}}
+          command: |
+            cd /root/code-notes
+            git checkout .
+            git pull
+            make
             
