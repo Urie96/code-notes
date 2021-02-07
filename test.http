@@ -1,0 +1,3 @@
+GET http://baidu.com
+
+GET http://baidu.com HTTP/1.1\nUser-Agent: vscode-restclient\naccept-encoding: gzip, deflate\n\n

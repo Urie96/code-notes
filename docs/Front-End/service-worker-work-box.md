@@ -1,6 +1,6 @@
 ---
 title: Service Worker 与 Work Box 的入门实践
-date: 2020-12-24 11:14:37
+date: 2020-12-24 11:14:37 GMT+0800
 categories: [Front-End]
 tags: [JavaScript]
 ---

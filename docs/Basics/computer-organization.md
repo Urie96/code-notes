@@ -1,6 +1,6 @@
 ---
 title: 计算机组成原理小抄
-date: 2021-01-05 10:28:21
+date: 2021-01-05 10:28:21 GMT+0800
 categories: [Basics]
 tags: []
 ---

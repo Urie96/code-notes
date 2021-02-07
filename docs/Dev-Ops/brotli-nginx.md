@@ -1,6 +1,6 @@
 ---
 title: Nginx 使用 Brotli 提升网站速度
-date: 2021-01-14 13:26:07
+date: 2021-01-14 13:26:07 GMT+0800
 categories: [Dev-Ops]
 tags: [Linux]
 ---

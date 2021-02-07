@@ -1,6 +1,6 @@
 ---
 title: Linux常用命令
-date: 2021-01-06 12:53:14
+date: 2021-01-06 12:53:14 GMT+0800
 categories: [Basics]
 tags: [Linux]
 ---
@@ -115,6 +115,7 @@ c.gz
 
 - `-I {}`表示将后面命令中的`{}`全部替换为参数
 - `-t`表示执行命令前打印命令语句
+- 没有`-I {}`时，xargs 会将所有的输入改为一行并用空格分割，作为后面的命令行参数<Badge text="2021.02.07+" />
 
 :::
 
@@ -125,6 +126,14 @@ $ mkfifo pipe
 $ cat pipe &
 $ echo hello >pipe
 hello
+```
+
+- `tr`替换字符 <Badge text="2021.02.07+" />
+
+```sh
+$ echo `a b`| tr " " "\n"
+a
+b
 ```
 
 ## 权限
@@ -139,15 +148,15 @@ uid=501(wenr3) gid=20(staff) groups=20(staff),12(everyone),61(localaccounts)··
 
 ## 网络
 
-- `telnet`
+- `telnet`可以作为客户端，与服务端建立 TCP 连接
 
 ```sh
 $ telnet sweetlove.top 80
 Trying 59.110.71.167...
 Connected to sweetlove.top.
 Escape character is '^]'.
-GET / HTTP/1.1
-Host: sweetlove.top
+GET / HTTP/1.1 # 自己输入
+Host: sweetlove.top # 自己输入
 
 HTTP/1.1 301 Moved Permanently
 Server: nginx/1.19.5
@@ -174,3 +183,32 @@ www.baidu.com is an alias for www.a.shifen.com.
 www.a.shifen.com has address 39.156.66.14
 www.a.shifen.com has address 39.156.66.18
 ```
+
+- `nc` <Badge text="2021.02.07+" />
+
+nc 可以作为 TCP 或者 UDP 的客户端或者服务端，非常方便，尤其是查看连接是否互通以及学习新网络协议时。
+
+- 监听 TCP：
+
+```sh
+$ nc -l 8080 > /tmp/out &
+[1] 43450
+$ echo 'hello' | nc localhost 8080
+[1]  + 43450 done       nc -l 8080 > /tmp/out
+$ cat /tmp/out
+hello
+```
+
+- 监听 UDP：
+
+```sh
+$ nc -lu 8080 > /tmp/out &
+[1] 45576
+$ echo 'world'| nc -u 127.0.0.1 8080
+^C
+[1]  + 45576 suspended (tty input)  nc -lu 8080 > /tmp/out
+$ cat /tmp/out
+world
+```
+
+> 不知道为啥这里不能用 localhost

@@ -14,7 +14,7 @@ module.exports = {
         ['meta', { name: 'msapplication-TileImage', content: '/favicon.svg' }],
         ['meta', { name: 'msapplication-TileColor', content: '#000000' }],
     ],
-    title: `Code Notes`,
+    title: `Young's Code Notes`,
     permalink: "/:year/:month/:day/:slug",
     description: ' ',
     plugins: getPlugins(),
@@ -34,6 +34,7 @@ module.exports = {
         nav: [
             { text: 'Home', link: '/', icon: 'reco-home' },
             { text: 'TimeLine', link: '/timeline/', icon: 'reco-date' }, // reco
+            { text: 'About', link: 'https://sweetlove.top/about', icon: 'reco-account' },
             { text: 'Github', link: 'https://github.com/Urie96', icon: 'reco-github' },
         ],
         smoothScroll: true,

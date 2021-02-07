@@ -1,6 +1,6 @@
 ---
 title: 操作系统笔记
-date: 2021-01-08 18:05:01
+date: 2021-01-08 18:05:01 GMT+0800
 categories: [Basics]
 tags: []
 ---

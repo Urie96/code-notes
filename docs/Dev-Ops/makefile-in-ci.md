@@ -1,6 +1,6 @@
 ---
 title: 在CI中使用Makefile优化安装依赖步骤
-date: 2021-02-01 14:16:55
+date: 2021-02-01 14:16:55 GMT+0800
 categories: [Dev-Ops]
 tags: [Shell]
 ---
@@ -20,11 +20,13 @@ tags: [Shell]
 判断是否改变有两种办法：
 
 - 基于内容：安装依赖之后将两个文件的 md5 保存到一个地方，下次安装依赖时检测当前两个文件的 md5 和之前是否一样，不一样才安装依赖。
-  > 更加准确，除非运气能好到 md5 出现哈希冲突，判断较慢。
+  > 更加准确，除非运气能好到 md5 出现哈希冲突。但判断较慢。
 - 基于时间：如果两个文件的修改时间新于`node_modules`，说明需要更新依赖。
   > 更快判断，但有可能很闲地在 package.json 中<kbd>Command</kbd>+<kbd>S</kbd>，就会更新文件时间即使文件内容没变，不过还好 Git 只考虑文件内容，时间变了到 CI 里也不会改变，所以这个问题可以忽略。
 
-比较可得第二种方案更优。Makefile 整好基于时间的方案：
+比较可得第二种方案更优。
+
+Makefile 正好是基于时间的方案：
 
 ```makefile
 # Makefile
@@ -59,3 +61,10 @@ node_modules: package-lock.json package.json
 - 命令前加`@`比如上面的`@echo`表示改命令不回显，不然控制台会打印`echo done`这句命令
 
 :::
+
+如果使用在 Alpine 镜像中构建，由于 Alpine 默认没有安装`make`，需要在 Dockerfile 最前面安装`make`，以利用 docker 缓存层:
+
+```dockerfile
+FROM alpine:latest
+RUN apk add --no-cache make
+```

@@ -1,6 +1,6 @@
 ---
 title: TypeScript 声明文件
-date: 2021-01-19 11:18:49
+date: 2021-01-19 11:18:49 GMT+0800
 categories: [Front-End]
 tags: [TypeScript]
 ---

@@ -1,6 +1,6 @@
 ---
 title: 动态加载 style 及 script
-date: 2020-12-23 15:44:44
+date: 2020-12-23 15:44:44 GMT+0800
 categories: [Front-End]
 tags: [Javascript, Webpack]
 ---

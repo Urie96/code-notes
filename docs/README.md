@@ -1,7 +1,7 @@
 ---
 home: true
 # bgImage: '/bg.png'
-heroText: Code Notes
+heroText: Young's Code Notes
 bgImageStyle:
   height: 'calc(100vh - 3.6rem)'
 permalink: ':regular'
