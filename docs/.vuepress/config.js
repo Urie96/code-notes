@@ -14,7 +14,7 @@ module.exports = {
         ['meta', { name: 'msapplication-TileImage', content: '/favicon.svg' }],
         ['meta', { name: 'msapplication-TileColor', content: '#000000' }],
     ],
-    title: `Young's Code Notes`,
+    title: '杨氏笔记',
     permalink: "/:year/:month/:day/:slug",
     description: ' ',
     plugins: getPlugins(),
