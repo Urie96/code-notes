@@ -34,7 +34,7 @@ nc: bad address 'mysql'
 
 只有在同一网络内，才可以通过 Docker 的 DNS 用容器 Name 得到容器 IP（被连接的容器不需要向宿主机暴露端口）。
 
-```sh
+```zsh
 $ docker network ls
 NETWORK ID     NAME               DRIVER    SCOPE
 9b539e51a804   bridge             bridge    local

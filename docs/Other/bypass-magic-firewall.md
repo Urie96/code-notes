@@ -21,7 +21,7 @@ tags: [Linux]
 
 先把 Python 安装好，之后安装 SSR 客户端 shadowsocksr：
 
-```sh
+```zsh
 $ git clone -b manyuser https://hub.fastgit.org/shadowsocksrr/shadowsocksr.git
 $ cd shadowsocksr
 $ vi config.json # 根据服务器的配置来配置
@@ -56,7 +56,7 @@ source ~/.bash_profile
 
 ## 测试
 
-```sh
+```zsh
 $ curl www.httpbin.org/ip
 {
   "origin": "59.110.71.167"

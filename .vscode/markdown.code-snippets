@@ -42,6 +42,23 @@
     "scope": "markdown",
     "body": "::: tip $1\n:::"
   },
+  "row": {
+    "prefix": "row",
+    "scope": "markdown",
+    "body": [
+      "::: row",
+      "",
+      "```zsh",
+      "$ $1",
+      "```",
+      "",
+      "```zsh",
+      "$ ",
+      "```",
+      "",
+      ":::"
+    ]
+  },
   "warning": {
     "prefix": "warn",
     "scope": "markdown",

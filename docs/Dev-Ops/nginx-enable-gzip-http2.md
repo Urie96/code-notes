@@ -38,7 +38,7 @@ nginx -V
 
 See [official documentation](http://nginx.org/en/docs/switches.html).
 
-```sh
+```zsh
 $ nginx # boot
 $ nginx -s reload
 $ nginx -s stop

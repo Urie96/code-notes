@@ -113,7 +113,7 @@ $ find $1 -name "*.gz" -type f -exec rm {} \;
 
 使用`find`遍历目录查找大于 10k 的文件名，使用`egrep`通过正则过滤文件名，使用`xargs`将文件名转换为命令参数，使用`wc`统计压缩的文件个数：
 
-```sh
+```zsh
 $ find ./dist -type f -size +10k | egrep "\.(js|css|html|svg)$" | xargs -I {} sh -c ' gzip --best -c "{}" > "{}".gz && echo "{}.gz"' | wc -l | xargs -I {} echo "{} files compressed"
 54 files compressed
 $ find ./dist -type f | egrep "\.gz$" | xargs -I {} sh -c "rm {} && echo {}" | wc -l | xargs -I {} echo "{} files deleted"

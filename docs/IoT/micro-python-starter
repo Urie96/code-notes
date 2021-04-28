@@ -32,7 +32,7 @@ wget https://micropython.org/resources/firmware/esp8266-20210202-v1.14.bin
 
 [esptool](https://github.com/espressif/esptool)用于与 ESP8266 和 ESP32 系列芯片中的 ROM 引导加载程序进行通信，可以将二进制数据写入闪存。
 
-```sh
+```zsh
 $ pip install esptool
 $ esptool.py read_mac
 ```

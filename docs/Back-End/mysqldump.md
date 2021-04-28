@@ -7,14 +7,14 @@ tags: [MySQL]
 
 # Export
 
-```sh
+```zsh
 $ mysqldump -h localhost -uroot -p [--all-databases] [database] [table1] [table2]  > /tmp/tmp.sql
 Enter password:
 ```
 
 # Import
 
-```sh
+```zsh
 $ mysql -h myserver -p
 Enter password:
 Welcome to the MySQL monitor.  Commands end with ; or \g.

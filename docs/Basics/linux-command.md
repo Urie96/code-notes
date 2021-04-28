@@ -34,7 +34,7 @@ tags: [Linux]
 
 - 输出覆盖重定向
 
-```sh
+```zsh
 $ echo hello > out
 $ cat out
 hello
@@ -42,7 +42,7 @@ hello
 
 - 输出追加重定向
 
-```sh
+```zsh
 $ echo world >> out
 $ cat out
 hello
@@ -51,7 +51,7 @@ world
 
 - 输入重定向
 
-```sh
+```zsh
 $ cat <out
 hello
 world
@@ -63,7 +63,7 @@ world
 
 - 错误流重定向
 
-```sh
+```zsh
 $ abc 2>out
 $ cat out
 zsh: command not found: abc
@@ -71,7 +71,7 @@ zsh: command not found: abc
 
 - 标准输入与标准错误重定向
 
-```sh
+```zsh
 $ (echo 111 && abc) >out
 zsh: command not found: abc
 $ cat out
@@ -92,7 +92,7 @@ zsh: command not found: abc
 
 - `tee`可以将标准输入流分流到标准输出流以及文件
 
-```sh
+```zsh
 $ echo hello | tee out
 hello
 $ cat out
@@ -101,7 +101,7 @@ hello
 
 - `xargs`可以将标准输入流根据换行符切分为多个命令参数，并依次执行命令
 
-```sh
+```zsh
 $ echo "a\nb\nc" | xargs -t -I {} echo "{}.gz"
 echo a.gz
 a.gz
@@ -121,7 +121,7 @@ c.gz
 
 - `mkfifo`命令管道
 
-```sh
+```zsh
 $ mkfifo pipe
 $ cat pipe &
 $ echo hello >pipe
@@ -130,8 +130,8 @@ hello
 
 - `tr`替换字符 <Badge text="2021.02.07+" />
 
-```sh
-$ echo `a b`| tr " " "\n"
+```zsh
+$ echo "a b" | tr " " "\n"
 a
 b
 ```
@@ -141,7 +141,7 @@ b
 - 创建文件时，文件具有属性拥有者、所属组，默认情况下用户会有一个同名用户组
 - `id`可以查看用户名和组名
 
-```sh
+```zsh
 $ id
 uid=501(wenr3) gid=20(staff) groups=20(staff),12(everyone),61(localaccounts)···
 ```
@@ -150,7 +150,7 @@ uid=501(wenr3) gid=20(staff) groups=20(staff),12(everyone),61(localaccounts)··
 
 - `telnet`可以作为客户端，与服务端建立 TCP 连接
 
-```sh
+```zsh
 $ telnet sweetlove.top 80
 Trying 59.110.71.167...
 Connected to sweetlove.top.
@@ -177,7 +177,7 @@ Location: https://sweetlove.top/
 
 - `host`
 
-```sh
+```zsh
 $ host www.baidu.com
 www.baidu.com is an alias for www.a.shifen.com.
 www.a.shifen.com has address 39.156.66.14
@@ -190,7 +190,7 @@ nc 可以作为 TCP 或者 UDP 的客户端或者服务端，非常方便，尤�
 
 - 监听 TCP：
 
-```sh
+```zsh
 $ nc -l 8080 > /tmp/out &
 [1] 43450
 $ echo 'hello' | nc localhost 8080
@@ -201,7 +201,7 @@ hello
 
 - 监听 UDP：
 
-```sh
+```zsh
 $ nc -lu 8080 > /tmp/out &
 [1] 45576
 $ echo 'world'| nc -u 127.0.0.1 8080
@@ -212,3 +212,32 @@ world
 ```
 
 > 不知道为啥这里不能用 localhost
+
+- 代理 <Badge text="2021.02.24+" />
+
+nc 可以监听某个端口，并代理到另一个端口，这样就可以查看网络交互内容了
+
+```zsh
+$ mkfifo pipe
+$ nc -l 80 < pipe | tee -a in | nc sweetlove.top 80 | tee -a out > pipe &
+[1] 50192 50193 50194 50195
+$ curl localhost
+$ cat in
+GET / HTTP/1.1
+Host: localhost
+User-Agent: curl/7.54.0
+Accept: */*
+
+$ cat out
+HTTP/1.1 200 OK
+Server: nginx/1.19.6
+Date: Wed, 24 Feb 2021 08:57:12 GMT
+Content-Type: text/html
+Content-Length: 612
+Last-Modified: Tue, 26 Jan 2021 07:40:31 GMT
+Connection: keep-alive
+ETag: "600fc76f-264"
+Accept-Ranges: bytes
+
+...
+```
