@@ -1,0 +1,20 @@
+kind: pipeline
+type: ssh
+name: default
+
+clone:
+  disable: true
+
+server:
+  host:
+    from_secret: ssh_ip
+  user: root
+  password:
+    from_secret: ssh_password
+
+steps:
+  - name: greeting
+    commands:
+      - cd /root/code-notes
+      - git pull gogs master
+      - make
