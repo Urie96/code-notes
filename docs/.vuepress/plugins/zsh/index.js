@@ -3,7 +3,7 @@ const Prism = require('prismjs');
 const loadLanguages = require('prismjs/components/');
 
 loadLanguages(['bash']);
-const { string, comment, operator } = Prism.languages.bash
+const { string, comment, operator, number } = Prism.languages.bash
 
 Prism.hooks.add('wrap', (env) => {
   if (env.type === 'root') {
@@ -12,11 +12,20 @@ Prism.hooks.add('wrap', (env) => {
 });
 
 Prism.languages.zsh = {
+  cmd: {
+    pattern: /(?<=(^|\n))\$( .*|\n)/,
+    inside: {
+      function: /(?<=((\n\$|^\$|;|\||&&)[ (]*))[./\w_-]+/,
+      parameter: /(?<= )-{1,2}\w+/,
+      string,
+      operator,
+      number,
+      comment,
+      root: /^\$/, // 最后面，因为被替换了
+    }
+  },
   signal: { pattern: /\n\^[CZ]\n/ },
-  function: { pattern: /(?<=((\$|;|\||&&)[ (]*))[./\w_-]+/ },
-  parameter: { pattern: /(?<= )-\w+/ },
-  root: { pattern: /(?<=(^|\n))\$(?=\W)/ },
-  string, comment, operator,
+  comment,
 }
 
 module.exports = () => ({

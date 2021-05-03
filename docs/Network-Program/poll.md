@@ -1,5 +1,5 @@
 ---
-title: C语言网络编程（五）：I/O多路复用——`poll()`
+title: C语言网络编程（六）：I/O多路复用——`poll()`
 date: 2021-04-27 17:29:29 GMT+0800
 categories: [Network-Program]
 tags: [Linux, C]

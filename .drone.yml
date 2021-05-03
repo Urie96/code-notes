@@ -13,8 +13,14 @@ server:
     from_secret: ssh_password
 
 steps:
-  - name: greeting
+  - name: build
     commands:
       - cd /root/code-notes
       - git pull gogs master
       - make
+
+trigger:
+  branch:
+    - master
+  event:
+    - push
