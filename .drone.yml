@@ -13,11 +13,42 @@ server:
     from_secret: ssh_password
 
 steps:
+  - name: send-begin-event
+    commands:
+      - |
+        curl -X POST -H "Content-Type: application/json" \
+        -d '{"msg_type":"text","content":{"text":"开始构建"}}' \
+        https://open.feishu.cn/open-apis/bot/v2/hook/d533ee85-c87e-456a-932c-cfaa08892798
+
   - name: build
     commands:
       - cd /root/code-notes
       - git pull gogs master
       - make
+      - |
+        curl -X POST -H "Content-Type: application/json" \
+        -d '{"msg_type":"text","content":{"text":"构建成功"}}' \
+        https://open.feishu.cn/open-apis/bot/v2/hook/d533ee85-c87e-456a-932c-cfaa08892798
+
+  - name: send-fail-event
+    commands:
+    - |
+      curl -X POST -H "Content-Type: application/json" \
+      -d '{"msg_type":"text","content":{"text":"构建失败"}}' \
+      https://open.feishu.cn/open-apis/bot/v2/hook/d533ee85-c87e-456a-932c-cfaa08892798
+    when:
+      status:
+      - failure
+  
+  - name: send-success-event
+    commands:
+    - |
+      curl -X POST -H "Content-Type: application/json" \
+      -d '{"msg_type":"text","content":{"text":"构建成功"}}' \
+      https://open.feishu.cn/open-apis/bot/v2/hook/d533ee85-c87e-456a-932c-cfaa08892798
+    when:
+      status:
+      - success
 
 trigger:
   branch:
