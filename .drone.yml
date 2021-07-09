@@ -25,10 +25,6 @@ steps:
       - cd /root/code-notes
       - git pull gogs master
       - make
-      - |
-        curl -X POST -H "Content-Type: application/json" \
-        -d '{"msg_type":"text","content":{"text":"构建成功"}}' \
-        https://open.feishu.cn/open-apis/bot/v2/hook/d533ee85-c87e-456a-932c-cfaa08892798
 
   - name: send-fail-event
     commands:
