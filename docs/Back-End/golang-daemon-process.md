@@ -28,35 +28,21 @@ int main() {
     }
     else if (pid == 0) {
         printf("child pid: %d\n", getpid());
-        sleep(6000000);
+        sleep(3600);
         exit(0);
     }
     printf("father(%d) fork a child(%d)\n", getpid(), pid);
-    char a;
-    scanf("%c", &a); // 等待标准输入，程序退出
+    sleep(3600); // 等待程序退出
 }
 ```
 
 **测试：**
 
-::: row
-
 ```zsh
 $ gcc main.c -o main && ./main
+[1] 1411339
 father(1411339) fork a child(1411340)
 child pid: 1411340
-
-
-
-
-
-a # 标准输入，使主进程结束
-$
-```
-
-```zsh
-$
-$
 $ pstree -asp 1411340 # 查看子进程的父进程链
 systemd,1 nokaslr
   └─sshd,1038 -D
@@ -65,16 +51,15 @@ systemd,1 nokaslr
               └─bash,1406370
                   └─main,1411339
                       └─main,1411340
-
+$ kill -2 1411339 # 关闭父进程
+[1]  + 1521798 interrupt  ./main
 $ pstree -asp 1411340 # 父进程结束后再查看
 systemd,1 nokaslr
   └─main,1411340
 ```
 
-:::
-
 ::: tip
-不能使用<kbd>Ctrl</kbd>+<kbd>C</kbd>发送`SIGKILL`信号中断父进程，否则子进程也会中断。
+不能在控制台输入<kbd>Ctrl</kbd>+<kbd>C</kbd>发送`SIGINT`信号中断父进程，这样会将信号传递到子进程。
 :::
 
 ## Golang 开启子进程
