@@ -165,7 +165,7 @@ type FollowedFile struct {
 
 func FollowFile(path string) (file *FollowedFile, err error) {
   file = &FollowedFile{}
-  if file.File, err = os.OpenFile(path, os.O_RDONLY, 0777); err != nil {
+  if file.File, err = os.Open(path); err != nil {
     return nil, err
   }
   if file.watcher, err = fsnotify.NewWatcher(); err != nil {
@@ -221,6 +221,226 @@ $ echo hello > /tmp/foo
 
 
 $ echo world >> /tmp/foo
+```
+
+:::
+
+## 远程 HTTP 监听
+
+先发送 HTTP header，过一秒再发送 body
+
+```go
+package main
+
+import (
+  "net/http"
+  "time"
+)
+
+func main() {
+  http.HandleFunc("/", func(rw http.ResponseWriter, r *http.Request) {
+    rw.WriteHeader(200)
+    time.Sleep(time.Second * 3)
+    rw.Write([]byte("hello, world\n"))
+  })
+  http.ListenAndServe(":8080", nil)
+}
+```
+
+**测试：**
+
+```zsh
+$ curl -v localhost:8080
+*   Trying ::1...
+* TCP_NODELAY set
+* Connected to localhost (::1) port 8080 (#0)
+> GET / HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/7.64.1
+> Accept: */*
+> # 阻塞3秒
+< HTTP/1.1 200 OK
+< Date: Mon, 26 Jul 2021 07:59:42 GMT
+< Content-Length: 12
+< Content-Type: text/plain; charset=utf-8
+<
+hello, world
+* Connection #0 to host localhost left intact
+* Closing connection 0
+```
+
+::: tip
+过了 3 秒才收到头部，猜测是为了提升性能，默认需要攒够足够的响应数据再发送数据包。
+:::
+
+如果在中间插入`Flush()`就可以立即发送数据：
+
+```diff
+rw.WriteHeader(200)
++ rw.(http.Flusher).Flush()
+time.Sleep(time.Second * 3)
+rw.Write([]byte("hello, world\n"))
+```
+
+**测试：**
+
+```zsh
+$ curl -v localhost:8080
+*   Trying ::1...
+* TCP_NODELAY set
+* Connected to localhost (::1) port 8080 (#0)
+> GET / HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/7.64.1
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Date: Mon, 26 Jul 2021 07:59:42 GMT
+< Content-Length: 12
+< Content-Type: text/plain; charset=utf-8
+< # 阻塞3秒
+hello, world
+* Connection #0 to host localhost left intact
+* Closing connection 0
+```
+
+所以可以包装一个`Writer`，使其每次调用`Write()`时都自动调用`Flush()`：
+
+```go
+package main
+
+import (
+  "io"
+  "net/http"
+  "os"
+  "sync"
+  "time"
+
+  "github.com/fsnotify/fsnotify"
+)
+
+func main() {
+  http.HandleFunc("/", func(rw http.ResponseWriter, r *http.Request) {
+    rw.WriteHeader(200)
+    rw.(http.Flusher).Flush()
+    w := NewWriteFlusher(rw)
+    time.Sleep(time.Second * 3)
+    file, _ := FollowFile("/tmp/foo")
+    io.Copy(w, file)
+  })
+  http.ListenAndServe(":8080", nil)
+}
+
+// WriteFlusher wraps the Write and Flush operation ensuring that every write
+// is a flush. In addition, the Close method can be called to intercept
+// Read/Write calls if the targets lifecycle has already ended.
+type WriteFlusher struct {
+  w           io.Writer
+  flusher     flusher
+  flushed     chan struct{}
+  flushedOnce sync.Once
+  closed      chan struct{}
+  closeLock   sync.Mutex
+}
+
+type flusher interface {
+  Flush()
+}
+
+var errWriteFlusherClosed = io.EOF
+
+func (wf *WriteFlusher) Write(b []byte) (n int, err error) {
+  select {
+  case <-wf.closed:
+    return 0, errWriteFlusherClosed
+  default:
+  }
+
+  n, err = wf.w.Write(b)
+  wf.Flush() // every write is a flush.
+  return n, err
+}
+
+// Flush the stream immediately.
+func (wf *WriteFlusher) Flush() {
+  select {
+  case <-wf.closed:
+    return
+  default:
+  }
+
+  wf.flushedOnce.Do(func() {
+    close(wf.flushed)
+  })
+  wf.flusher.Flush()
+}
+
+// Flushed returns the state of flushed.
+// If it's flushed, return true, or else it return false.
+func (wf *WriteFlusher) Flushed() bool {
+  // BUG(stevvooe): Remove this method. Its use is inherently racy. Seems to
+  // be used to detect whether or a response code has been issued or not.
+  // Another hook should be used instead.
+  var flushed bool
+  select {
+  case <-wf.flushed:
+    flushed = true
+  default:
+  }
+  return flushed
+}
+
+// Close closes the write flusher, disallowing any further writes to the
+// target. After the flusher is closed, all calls to write or flush will
+// result in an error.
+func (wf *WriteFlusher) Close() error {
+  wf.closeLock.Lock()
+  defer wf.closeLock.Unlock()
+
+  select {
+  case <-wf.closed:
+    return errWriteFlusherClosed
+  default:
+    close(wf.closed)
+  }
+  return nil
+}
+
+// NewWriteFlusher returns a new WriteFlusher.
+func NewWriteFlusher(w io.Writer) *WriteFlusher {
+  var fl flusher
+  if f, ok := w.(flusher); ok {
+    fl = f
+  } else {
+    fl = &NopFlusher{}
+  }
+  return &WriteFlusher{w: w, flusher: fl, closed: make(chan struct{}), flushed: make(chan struct{})}
+}
+
+type NopFlusher struct{}
+
+// Flush is a nop operation.
+func (f *NopFlusher) Flush() {}
+```
+
+**测试：**
+
+::: row
+
+```zsh
+$ curl localhost:8080
+
+hello
+
+world
+```
+
+```zsh
+$
+$ echo hello >> /tmp/foo
+$
+$ echo world >> /tmp/foo
+$
 ```
 
 :::
